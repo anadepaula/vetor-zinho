@@ -12,19 +12,51 @@
 # Vetores de teste
 ############################################################
 
-array1:     .word 109, 28, 34, 17, 12         # n = 5
-array2:     .word 11, 33, 4, 9, 1, 5     # n = 6
+array_length_11: 25
+array_length_12: 25
+array_length_13: 25
+array_11: .word 72, 133, 150, 190, 191, 219, 230, 236, 265, 297, 301, 544, 656, 667, 682, 700, 701, 751, 762, 821, 866, 869, 890, 911, 931
+array_name_11: .asciiz "array n=25, sortedness=0"
+array_12: .word 931, 911, 890, 869, 866, 821, 762, 751, 701, 700, 682, 667, 656, 544, 301, 297, 265, 236, 230, 219, 191, 190, 150, 133, 72
+array_name_12: .asciiz "array n=25, sortedness=-1"
+array_13: .word 150, 869, 866, 191, 301, 682, 265, 890, 133, 219, 762, 931, 701, 821, 667, 297, 544, 700, 72, 911, 751, 236, 190, 230, 656
+array_name_13: .asciiz "array n=25, sortedness=2"
 
-msg_a1_before: .asciiz "\nArray1 antes: "
-msg_a1_after:  .asciiz "Array1 depois: "
-msg_a2_before: .asciiz "\nArray2 antes: "
-msg_a2_after:  .asciiz "Array2 depois: "
-
+msg_before: .asciiz "before: "
+msg_after:  .asciiz "after: "
+msg_elapsed_ms: .asciiz "milisseconds elapsed: "
 newline:    .asciiz "\n"
 space:      .asciiz " "
 
 .text
 .globl main
+
+main:
+
+    array_11_block:
+        la $a0, array_11
+        lw $a1, array_length_11
+        la $a2, array_name_11
+        la $s7, array_12_block
+        j sort
+
+    array_12_block:
+        la $a0, array_12
+        lw $a1, array_length_12
+        la $a2, array_name_12
+        la $s7, array_13_block
+        j sort
+
+    array_13_block:
+        la $a0, array_13
+        lw $a1, array_length_13
+        la $a2, array_name_13
+        la $s7, array_end_block
+        j sort
+
+    array_end_block:
+        li   $v0, 10          # syscall 10 = exit
+        syscall
 
 ############################################################
 # sort
