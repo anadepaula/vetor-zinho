@@ -27,69 +27,73 @@ space:      .asciiz " "
 .globl main
 
 ############################################################
-# main
+# sort
 ############################################################
 
-main:
+sort:
+    # Guardar parâmetros em temporários para não perder com syscalls
+    move $s3, $a0          # array
+    move $s4, $a1          # array_length
+
     ########################################################
-    # Teste com Array 1
+    # array
     ########################################################
-    # Antes
-    li  $v0, 4
-    la  $a0, msg_a1_before
+    # imprime o nome do array
+    li   $v0, 4
+    la   $a0, ($a2)
+    syscall
+    la $a0, newline
     syscall
 
-    la  $a0, array1
-    li  $a1, 5
-    jal print_array
+    # imprime "array antes"
+    li   $v0, 4
+    la   $a0, msg_before
+    syscall
+
+    # imprime conteúdo de array antes de ordenar
+    la   $a0, ($s3)
+    la   $a1, ($s4)
+    jal  print_array
+
+    # captura a timestamp atual e armazena em $s5
+    li  $v0, 30
+    syscall
+    la $s5, ($a0)
 
     # Ordenando
-    la  $a0, array1
-    li  $a1, 5
-    jal selection_sort
+    la   $a0, ($s3)
+    la   $a1, ($s4)
+    jal  selection_sort
 
-    # Depois
+    # captura a timestamp atual e armazena em $s6
+    li  $v0, 30
+    syscall
+    la $s6, ($a0)
+    
+    # imprime "array depois"
+    li   $v0, 4
+    la   $a0, msg_after
+    syscall
+
+    # imprime conteúdo de array depois de ordenar
+    la   $a0, ($s3)
+    la   $a1, ($s4)
+    jal  print_array
+
+    # calcula tempo de duração
+    sub $s5, $s6, $s5
+    # imprime "elapsed time"
+    li   $v0, 4
+    la   $a0, msg_elapsed_ms
+    syscall
+    li   $v0, 1
+    la   $a0, ($s5)
+    syscall
     li  $v0, 4
-    la  $a0, msg_a1_after
+    la $a0, newline
     syscall
 
-    la  $a0, array1
-    li  $a1, 5
-    jal print_array
-
-
-    ########################################################
-    # Teste com Array 2
-    ########################################################
-    # Antes
-    li  $v0, 4
-    la  $a0, msg_a2_before
-    syscall
-
-    la  $a0, array2
-    li  $a1, 6
-    jal print_array
-
-    # Ordenando
-    la  $a0, array2
-    li  $a1, 6
-    jal selection_sort
-
-    # Depois
-    li  $v0, 4
-    la  $a0, msg_a2_after
-    syscall
-
-    la  $a0, array2
-    li  $a1, 6
-    jal print_array
-
-
-    ########################################################
-    # Encerrar programa
-    ########################################################
-    li  $v0, 10
-    syscall
+    jalr  $s7
 
 
 ############################################################
